@@ -4,6 +4,14 @@ OLD_INTERFACE="wlp2s0"
 INTERFACE="hotspot"
 IP="192.168.28.1"
 
+# killing hostapd
+sudo pkill -ef hostapd
+sleep 1
+
+# killing udhcpd
+sudo pkill -ef udhcpd
+sleep 1
+
 # message
 echo "creating new interface $INTERFACE with ip: $IP"
 
@@ -30,26 +38,27 @@ sudo ifconfig $INTERFACE $IP up
 sleep 1
 # run INTERFACE on background
 sudo hostapd hostapd.conf &
+echo "result hostapd: $?"
 
 sleep 2
 # configuration for udhcpd
 echo "creating /etc/udhcpd.conf"
 sudo cp udhcpd.conf /etc/udhcpd.conf
-sleep 2
 
-# run udchpd
-sudo udhcpd &
-echo "Done!"
-
+sleep 1
 # giving access to internet to clients
 echo "1" > /proc/sys/net/ipv4/ip_forward
 sleep 1
 # sudo cp -i ip_forward /proc/sys/net/ipv4/
 
 sudo iptables --table nat --append POSTROUTING --out-interface $ETHER_INTERFACE -j MASQUERADE
-sleep 2
+sleep 1
 
 sudo iptables --append FORWARD --in-interface $INTERFACE -j ACCEPT
-sleep 2
+sleep 1 
 
+# run udchpd
+sudo udhcpd &
+echo "Done!"
 echo "now we have the internet on the client device :D"
+sleep 1
