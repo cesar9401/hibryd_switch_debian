@@ -1,7 +1,6 @@
 #!/bin/bash
 
 echo "Looking for wifi connections"
-echo ""
 
 # wlp2so
 sudo ifconfig wlp2s0 up
