@@ -2,7 +2,7 @@
 
 # agregar binarios al PATH
 # de preferencia agregar el export al archivo /etc/profile y luego reiniciar
-export PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
+# export PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 echo $PATH
 
 # sleep 2
@@ -33,7 +33,10 @@ sudo apt-get install rfkill
 # sleep 2
 
 # install udhcpd
-sudo apt-get install udhcpd
+# sudo apt-get install udhcpd
+
+# install dnsmasq
+sudo apt-get install dnsmasq
 
 # install NetworkManager - nmcli
 sudo apt-get install network-manager
@@ -44,5 +47,4 @@ sleep 1
 sudo systemctl enable NetworkManager.service
 
 # sleep 2
-echo ""
 echo "Done!"

@@ -26,10 +26,10 @@ function turn_off_hostapd_udhcpd() {
 # sudo nmcli device connect $ETHER_INTERFACE
 
 # killing hostapd and udhcpd
-turn_off_hostapd_udhcpd
+# turn_off_hostapd_udhcpd
 
 # message
-echo "creating new interface $INTERFACE with ip: $IP"
+echo "creating new interface $INTERFACE with ip: $IP/24"
 
 # turn off OLD_INTERFACE
 sudo ifconfig $OLD_INTERFACE down
@@ -56,25 +56,32 @@ fi
 
 # set up the IP for our new interface
 # sudo ifconfig $INTERFACE $IP netmask 255.255.255.0 up
-sudo ifconfig $INTERFACE $IP up
+sudo ifconfig $INTERFACE $IP/24 up
 sleep 1
 
 # configuration for udhcpd
-echo "creating /etc/udhcpd.conf"
-sudo cp udhcpd.conf /etc/
+# echo "creating /etc/udhcpd.conf"
+# sudo cp udhcpd.conf /etc/
+
+# configuracion for dnsmasq
+echo "creating /etc/dnsmasq.conf"
+sudo cp dnsmasq.conf /etc/
+sleep 1
 
 # enable Network Address Translation NAT
-sudo iptables --flush
-sudo iptables --table nat --flush
-sudo iptables --delete-chain
-sudo iptables --table nat --delete-chain
-sudo iptables --table nat --flush
+sudo iptables -t nat -F
+sudo iptables -F
+# sudo iptables --delete-chain
+# sudo iptables --table nat --delete-chain
+# sudo iptables --table nat --flush
 # enable Network Address Translation NAT
 
-sudo iptables --table nat --append POSTROUTING --out-interface $ETHER_INTERFACE -j MASQUERADE
+# sudo iptables --table nat --append POSTROUTING --out-interface $ETHER_INTERFACE -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o $ETHER_INTERFACE -j MASQUERADE
 sleep 2
 
-sudo iptables --append FORWARD --in-interface $INTERFACE -j ACCEPT
+# sudo iptables --append FORWARD --in-interface $INTERFACE -j ACCEPT
+sudo iptables -A FORWARD -i $INTERFACE -o $ETHER_INTERFACE -j ACCEPT
 sleep 2 
 
 # giving access to internet to clients
@@ -83,23 +90,26 @@ sudo sysctl -w net.ipv4.ip_forward=1
 sleep 1
 # sudo cp -i ip_forward /proc/sys/net/ipv4/
 
-echo "Done, now we have the internet on the client device :D"
-sleep 1
-
 # run INTERFACE on background
-sudo hostapd hostapd.conf &
+sudo service dnsmasq stop
+sleep 1
+sudo service dnsmasq start
 sleep 2
-sudo systemctl restart udhcpd.service
+echo "now we have the internet on the client device :D"
+sudo hostapd hostapd.conf
+# sudo systemctl restart udhcpd.service
 
 # run udchpd
-sudo udhcpd -f
+# sudo udhcpd -f
+
+sudo service dnsmasq stop
 
 # disable NAT
 # sudo iptables -D POSTROUTING -t nat -o $ETHER_INTERFACE -j MASQUERADE
-sudo iptables --flush
-
-# disable routing
+sudo iptables -t nat -F
+sudo iptables -F
 sudo sysctl -w net.ipv4.ip_forward=0
 
+echo "Done"
 # turn off hostapd and udhcpd
-turn_off_hostapd_udhcpd
+# turn_off_hostapd_udhcpd
