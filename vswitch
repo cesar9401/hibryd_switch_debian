@@ -4,6 +4,7 @@ OLD_INTERFACE="wlp2s0"
 INTERFACE="hotspot"
 IP1="10.10.10.1"
 IP2="10.10.20.1"
+DIR="~/.hibryd_switch_debian"
 
 function turn_off_hostapd_udhcpd() {
     # killing hostapd
@@ -72,7 +73,7 @@ sleep 1
 
 # configuracion for dnsmasq
 echo "creating /etc/dnsmasq.conf"
-sudo cp vswitch_dnsmasq.conf /etc/dnsmasq.conf
+sudo cp $DIR/vswitch_dnsmasq.conf /etc/dnsmasq.conf
 
 # enable Network Address Translation NAT
 sudo iptables -t nat -F
@@ -115,7 +116,7 @@ sleep 2
 echo "now we have the internet on the client device :D"
 sudo ifconfig $ETHER_INTERFACE $IP2/24 up
 sleep 1
-sudo hostapd hostapd.conf
+sudo $DIR/hostapd hostapd.conf
 # sudo systemctl restart udhcpd.service
 
 # run udchpd
