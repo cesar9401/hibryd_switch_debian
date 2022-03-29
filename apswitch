@@ -3,7 +3,7 @@ ETHER_INTERFACE="enp1s0"
 OLD_INTERFACE="wlp2s0"
 INTERFACE="hotspot"
 IP="10.10.20.1"
-DIR="~/.hibryd_switch_debian"
+DIR=".hibryd_switch_debian"
 
 function turn_off_hostapd_udhcpd() {
     # killing hostapd
@@ -72,7 +72,7 @@ sleep 1
 
 # configuracion for dnsmasq
 echo "creating /etc/dnsmasq.conf"
-sudo cp $DIR/dnsmasq.conf /etc/
+sudo cp ~/$DIR/dnsmasq.conf /etc/
 sleep 1
 
 # enable Network Address Translation NAT
@@ -103,7 +103,7 @@ sleep 1
 sudo service dnsmasq start
 sleep 2
 echo "now we have the internet on the client device :D"
-sudo hostapd $DIR/hostapd.conf
+sudo hostapd ~/$DIR/hostapd.conf
 # sudo systemctl restart udhcpd.service
 
 # run udchpd
