@@ -63,10 +63,8 @@ sudo ifconfig $INTERFACE $IP1/24 up
 sleep 1
 
 # ETHER_INTERFACE up
-sudo ifconfig $ETHER_INTERFACE $IP2/24 up
 # sudo ifconfig $ETHER_INTERFACE 10.10.20.2
 #sudo ifconfig $ETHER_INTERFACE up
-sleep 1
 
 # configuration for udhcpd
 # echo "creating /etc/udhcpd.conf"
@@ -115,6 +113,8 @@ sleep 1
 sudo service dnsmasq start
 sleep 2
 echo "now we have the internet on the client device :D"
+sudo ifconfig $ETHER_INTERFACE $IP2/24 up
+sleep 1
 sudo hostapd hostapd.conf
 # sudo systemctl restart udhcpd.service
 

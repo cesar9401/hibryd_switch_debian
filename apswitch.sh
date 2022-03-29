@@ -51,6 +51,12 @@ else
     sleep 1
 fi
 
+# turn on enp1s0
+sudo nmcli device disconnect $ETHER_INTERFACE
+wait;
+sudo nmcli device connect $ETHER_INTERFACE
+wait;
+
 # setting up a virtual wireless interface of our existing interface wlp2s0 
 # sudo iw phy phy0 interface add $INTERFACE type __ap
 
