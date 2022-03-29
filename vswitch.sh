@@ -30,8 +30,8 @@ function turn_off_hostapd_udhcpd() {
 # turn_off_hostapd_udhcpd
 
 # message
-echo "$IP1"
-echo "$IP2"
+echo "hotspot: $IP1/24"
+echo "enp1s0: $IP2/24"
 
 # turn off OLD_INTERFACE
 sudo ifconfig $OLD_INTERFACE down
@@ -62,8 +62,10 @@ fi
 sudo ifconfig $INTERFACE $IP1/24 up
 sleep 1
 
-# up ETHER_INTERFACE up
+# ETHER_INTERFACE up
 sudo ifconfig $ETHER_INTERFACE $IP2/24 up
+# sudo ifconfig $ETHER_INTERFACE 10.10.20.2
+#sudo ifconfig $ETHER_INTERFACE up
 sleep 1
 
 # configuration for udhcpd
@@ -71,8 +73,8 @@ sleep 1
 # sudo cp udhcpd.conf /etc/
 
 # configuracion for dnsmasq
-# echo "creating /etc/dnsmasq.conf"
-# sudo cp dnsmasq.conf /etc/
+echo "creating /etc/dnsmasq.conf"
+sudo cp vswitch_dnsmasq.conf /etc/dnsmasq.conf
 
 # enable Network Address Translation NAT
 sudo iptables -t nat -F
@@ -105,9 +107,13 @@ sudo sysctl -w net.ipv4.ip_forward=1
 sleep 1
 # sudo cp -i ip_forward /proc/sys/net/ipv4/
 
+echo "Iniciando dnsmasq"
+
 # run INTERFACE on background
-# sudo service dnsmasq stop
-# sudo service dnsmasq start
+sudo service dnsmasq stop
+sleep 1
+sudo service dnsmasq start
+sleep 2
 echo "now we have the internet on the client device :D"
 sudo hostapd hostapd.conf
 # sudo systemctl restart udhcpd.service
@@ -115,7 +121,7 @@ sudo hostapd hostapd.conf
 # run udchpd
 # sudo udhcpd -f
 
-# sudo service dnsmasq stop
+sudo service dnsmasq stop
 
 # disable NAT
 # sudo iptables -D POSTROUTING -t nat -o $ETHER_INTERFACE -j MASQUERADE
